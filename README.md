@@ -9,7 +9,7 @@ https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.htm
 
 **INSTALLATION** : 
 1) Create a folder.
-2) Download check_aws_instances.ps1 and config_file.ps1
+2) Download check_aws_instances.ps1 and config_file.ps1 and put in the freshly created folder.
 
 **CONFIGURE** : 
 1) Modify config_file.ps1 with User tag in $UserName and the name of aws sso profile (from step 2 of prerequisites) in $AwsProfile.
