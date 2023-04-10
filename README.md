@@ -44,7 +44,7 @@ Note that it will take few seconds for a instance to finish start or stop.
 * If multiple instances are started, it will create a special shortcut to stop all the running instances in one click.
 
 
-** NOT SUPPORTED ** :
+**NOT SUPPORTED** :
 
 * sso refresh token seems not supported.
 * When clicking on shortcut it will open a cmd windows. Silent execution "cmd /c /q" with .lnk shortcut seems not working.
