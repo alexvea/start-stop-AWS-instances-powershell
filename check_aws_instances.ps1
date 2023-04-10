@@ -99,13 +99,18 @@ aws ec2 describe-instances --filters Name=tag:User,Values=$UserName Name=tag:Sch
     #Case for multi-instances stop (from instance status) in the loop for each.
     If($_.split("`t")[2] -eq "running") 
         { 
-            $MultipleInstancesStop=$MultipleInstancesStop+" "+$_.split("`t")[0]
+            $MultiInstanceSeparator=" "
+            If($MultipleInstancesStop -eq "") 
+                {
+                $MultiInstanceSeparator=""
+                }
+            $MultipleInstancesStop=$MultipleInstancesStop+$MultiInstanceSeparator+$_.split("`t")[0]
         }   
     # End of for each
     }
 #Case for multi-instances stop (from instance status) outside the loop for each, to create the shortcut.
-if($MultipleInstancesStop -ne "")
-    {
+if($MultipleInstancesStop -ne "" -And $MultipleInstancesStop -match " ")
+  {
         Create-instance-shortcut -InstanceName all-running-instances-of-$UserName-stop-only -InstanceID $MultipleInstancesStop -InstanceStatus running
     }
 }
@@ -116,4 +121,5 @@ GetInstancesList -UserName $UserName -AwsProfile $AwsProfile
 
 Write-Host "## Closing in $SleepTime seconds...##"
 Start-Sleep $SleepTime
+
 
