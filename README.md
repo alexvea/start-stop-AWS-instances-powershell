@@ -36,4 +36,21 @@ Then you can click on any shortcut to start or stop the instance depending on it
 You can refresh instances states by clicking again on check_aws_instances.ps1.
 Note that it will take few seconds for a instance to finish start or stop.
 
+**FUNCTIONNALITIES** : 
 
+* Create shortcuts to execute aws ec2 stop/start-instances command, according to instance status (running/stopped).
+* If the instance is being started or stopped, it will create a shortcut to show details of the instance (aws ec2 describe-instances command).
+* Support config file.
+* If multiple instances are started, it will create a special shortcut to stop all the running instances in one click.
+
+
+** NOT SUPPORTED ** :
+
+* sso refresh token seems not supported.
+* When clicking on shortcut it will open a cmd windows. Silent execution "cmd /c /q" with .lnk shortcut seems not working.
+
+
+Note that it will not modify in any way the instances. The only aws cli commands used are :
+aws ec2 describe-instances
+aws ec2 start-instances
+aws ec2 stop-instances
