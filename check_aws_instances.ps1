@@ -1,6 +1,18 @@
 #Import (unversioned) config_file.ps1
 . ./config_file.ps1
 
+function Check_token_repiration {
+##https://repost.aws/knowledge-center/sts-iam-token-expired
+    $NowDate     = Get-Date ## -Format yyyy-M-dd"T"HH:mm:ssZ
+    $myJson = Get-Content -Raw -Path $env:USERPROFILE\.aws\cli\cache\*.json | ConvertFrom-Json
+    ##2023-04-10T18:41:53Z
+    $ExpirationDate = $myJson.Credentials.Expiration
+    Write-Host "Date expiration token : "$ExpirationDate " A comparer : " $NowDate.AddHours(-2)
+     if($NowDate.AddHours(-2) -ge $ExpirationDate){
+         aws configure sso --profile $AwsProfile
+    }
+
+}
 
 ## Function to check if folder where shortcuts will be created exist or not.
 ## It will delete 
@@ -116,10 +128,11 @@ if($MultipleInstancesStop -ne "" -And $MultipleInstancesStop -match " ")
 }
 
 CreateFolder
-
+Check_token_repiration
 GetInstancesList -UserName $UserName -AwsProfile $AwsProfile
 
 Write-Host "## Closing in $SleepTime seconds...##"
 Start-Sleep $SleepTime
+
 
 
