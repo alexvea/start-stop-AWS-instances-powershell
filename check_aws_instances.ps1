@@ -9,7 +9,7 @@ function Check_token_repiration {
     $ExpirationDate = $myJson.Credentials.Expiration
     Write-Host "Date expiration token : "$ExpirationDate " A comparer : " $NowDate.AddHours(-2)
      if($NowDate.AddHours(-2) -ge $ExpirationDate){
-         aws configure sso --profile $AwsProfile
+          aws sso login --profile $AwsProfile
     }
 
 }
