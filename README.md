@@ -19,6 +19,12 @@ https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.htm
 $UserName = "Avea"
 $AwsProfile = "Virtu_CustomerCare-xxxxxxxxxxx"
 ````
+
+can get $AwsProfile from 
+```
+%HOMEPATH%\.aws\config
+```
+
 **USAGE** : 
 
 Right-click on the check_aws_instances.ps1 file and click on "Execute with powershell"
