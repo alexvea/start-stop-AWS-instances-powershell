@@ -5,5 +5,5 @@ $AwsProfile = "xxxx"
 
 ## Others parameters
 $SleepTime = 2
-$FolderName = ".\instances"
+$FolderName = "$pwd\instances"
 $IconLocation = "C:\Windows\System32\Shell32.dll"
