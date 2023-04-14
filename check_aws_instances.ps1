@@ -77,7 +77,7 @@ Write-Host "Creating shortcut for instance $InstanceName."
         $Shortcut = $WshShell.CreateShortcut("$FolderName\$Action-AWS-$InstanceName-$InstanceIP.lnk")
         $Shortcut.IconLocation = "$IconLocation, $IconArrayIndex"
         $Shortcut.TargetPath = "cmd.exe"
-        $Shortcut.Arguments = "/q /c aws ec2 $Action-instances --profile $AwsProfile --instance-ids $InstanceID"
+        $Shortcut.Arguments = "/q /c START /MIN cmd /k (aws ec2 $Action-instances --profile $AwsProfile --instance-ids $InstanceID)"
         $Shortcut.Save()
 }
 
