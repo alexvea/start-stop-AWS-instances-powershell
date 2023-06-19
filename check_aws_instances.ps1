@@ -2,7 +2,6 @@
 . ./config_file.ps1
 
 function Check_token_repiration {
-##https://repost.aws/knowledge-center/sts-iam-token-expired
     $NowDate     = Get-Date ## -Format yyyy-M-dd"T"HH:mm:ssZ
     $myJson = Get-Content -Raw -Path $env:USERPROFILE\.aws\cli\cache\*.json | ConvertFrom-Json
     ##2023-04-10T18:41:53Z
@@ -44,9 +43,10 @@ function Create-instance-shortcut {
         [Parameter(Mandatory)]
         [string]$InstanceID = $env:INSTANCEID
     ,
-
         [Parameter(Mandatory)]
         [string]$InstanceStatus = $env:INSTANCESTATUS
+    ,
+        [string]$InstanceIP = $env:INSTANCEIP
     )
 Write-Host "Creating shortcut for instance $InstanceName."
         $Action=""
@@ -74,10 +74,10 @@ Write-Host "Creating shortcut for instance $InstanceName."
             }
    
         $WshShell = New-Object -comObject WScript.Shell
-        $Shortcut = $WshShell.CreateShortcut("$FolderName\$Action-AWS-$InstanceName.lnk")
+        $Shortcut = $WshShell.CreateShortcut("$FolderName\$Action-AWS-$InstanceName-$InstanceIP.lnk")
         $Shortcut.IconLocation = "$IconLocation, $IconArrayIndex"
         $Shortcut.TargetPath = "cmd.exe"
-        $Shortcut.Arguments = "/q /c aws ec2 $Action-instances --profile $AwsProfile --instance-ids $InstanceID"
+        $Shortcut.Arguments = "/q /c START /MIN cmd /k (aws ec2 $Action-instances --profile $AwsProfile --instance-ids $InstanceID)"
         $Shortcut.Save()
 }
 
@@ -105,18 +105,17 @@ Write-Host "## With tag Schedule stop-only (to exclude shared instances). ##"
 # i-04fbxxxxx   avea-old-xxxx  stopped
 # i-02xxxxxxxx  avea-old-xxxxx stopped
 # i-018xxxxx    avea-cent      running
-aws ec2 describe-instances --filters Name=tag:User,Values=$UserName Name=tag:Schedule,Values=stop-only --profile $AwsProfile --output text --query "Reservations[*].Instances[*].{Instance_id:InstanceId,Name:Tags[?Key=='Name'].Value | [0],Instance_id:InstanceId,State:State.Name}" | %{ 
-    Create-instance-shortcut -InstanceName $_.split("`t")[1] -InstanceID $_.split("`t")[0] -InstanceStatus $_.split("`t")[2]
-
+aws ec2 describe-instances --filters Name=tag:User,Values=$UserName Name=tag:Schedule,Values=stop-only --profile $AwsProfile --output text --query "Reservations[*].Instances[*].{Instance_id:InstanceId,Name:Tags[?Key=='Name'].Value | [0],Instance_id:InstanceId,State:State.Name,IP:PrivateIpAddress}" | %{ 
+    Create-instance-shortcut  -InstanceIP $_.split("`t")[0]  -InstanceID $_.split("`t")[1]  -InstanceName $_.split("`t")[2] -InstanceStatus $_.split("`t")[3]  
     #Case for multi-instances stop (from instance status) in the loop for each.
-    If($_.split("`t")[2] -eq "running") 
+    If($_.split("`t")[3] -eq "running") 
         { 
             $MultiInstanceSeparator=" "
             If($MultipleInstancesStop -eq "") 
                 {
                 $MultiInstanceSeparator=""
                 }
-            $MultipleInstancesStop=$MultipleInstancesStop+$MultiInstanceSeparator+$_.split("`t")[0]
+            $MultipleInstancesStop=$MultipleInstancesStop+$MultiInstanceSeparator+$_.split("`t")[1]
         }   
     # End of for each
     }
